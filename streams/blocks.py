@@ -125,4 +125,9 @@ class ButtonBlock(blocks.StructBlock):
 
 
 class BodyBlock(blocks.StructBlock):
-    markdown = MarkdownBlock(icon="code", help_text="Markdown syntax, easily convertible from latex. It supports document and image linking")
+    markdown = MarkdownBlock(required=False, icon="code", help_text="Markdown syntax, easily convertible from latex. It supports document and image linking")
+    
+    class Meta: # noqa
+    	template = "streams/markdown_block.html"
+    	icon = "placeholder"
+    	label = "Markdown"
