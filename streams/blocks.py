@@ -17,7 +17,7 @@ class TitleAndTextBlock(blocks.StructBlock):
 class ImageBlock(blocks.StructBlock):
 	"""Simple Image insertion block"""
 
-	caption = blocks.CharBlock(required=False, max_length=200, help_text="Add a caption"),
+	caption = blocks.CharBlock(required=False, max_length=200, help_text="Add a caption")
 	image = ImageChooserBlock(required=True)
 
 	class Meta: # noqa
