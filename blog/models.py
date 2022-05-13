@@ -188,6 +188,8 @@ class BlogDetailPage(Page):
 	categories = ParentalManyToManyField("blog.BlogCategory", blank=True)
 
 	content_panels = Page.content_panels + [
+		StreamFieldPanel("content"),
+
 		MultiFieldPanel([
 			FieldPanel("custom_title"),
 			FieldPanel("intro"),
@@ -197,7 +199,6 @@ class BlogDetailPage(Page):
 		MultiFieldPanel([
 			InlinePanel("blog_authors", label = "Author", min_num=1, max_num=4),
 			], heading="Author(s)"),		
-		StreamFieldPanel("content"),
 	]
 
 class ArticleBlogPage(BlogDetailPage):
