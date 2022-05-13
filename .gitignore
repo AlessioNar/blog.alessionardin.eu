@@ -6,3 +6,4 @@ media/*
 static/*
 .env
 manage.py
+.dockerignore
