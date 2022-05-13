@@ -78,10 +78,8 @@ class BlogCategory(models.Model):
 	"""Blog category for a snippet"""
 	name = models.CharField(max_length=255)
 	slug = AutoSlugField(
-		populate_from="name",
-		verbose_name="slug", 
-		allow_unicode=True,
-		max_length=255,
+		populate_from=["name"]
+		, editable=True,
 		help_text='A slug to identify posts by this category',
 
 		)
