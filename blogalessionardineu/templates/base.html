@@ -1,0 +1,105 @@
+{% load static wagtailcore_tags wagtailuserbar menus_tags %}
+
+{% get_menu "main" as navigation %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        {% block title %}
+        {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+        {% wagtail_site as current_site %}
+        {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+        {% endblock %}
+    </title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {# Global stylesheets #}
+    <link href="https://bootswatch.com/5/superhero/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/blogalessionardineu.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    {% block extra_css %}
+    {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+    {% wagtailuserbar %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="https://alessionardin.eu">alessionardin.eu</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home
+                            <span class="visually-hidden">(current)</span>
+                        </a>
+                    </li>
+                    {% for item in navigation.menu_items.all %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{item.link}}" {% if item.open_in_new_tab %} target="_blank"{% endif %}>{{item.title}}</a>
+                    </li>                                        
+                    {% endfor %}
+                </ul>
+                <!--
+                <form class="d-flex" data-np-checked="1">
+                    <input class="form-control me-sm-2" type="text" placeholder="Search" data-np-checked="1">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>-->
+            </div>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <div class="container">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-muted">Alessio Nardin © 2022</p>
+    
+    {% if settings.site_settings.SocialMediaSettings.linkedin %}
+        <a href="{{ settings.site_settings.SocialMediaSettings.linkedin }}">    
+            <i class="bi bi-linkedin"></i>
+        </a>
+    {% endif %}
+    {% if settings.site_settings.SocialMediaSettings.github %}
+        <a href="{{ settings.site_settings.SocialMediaSettings.github }}">    
+            <i class="bi bi-github"></i>
+        </a>
+    {% endif %}
+    {% if settings.site_settings.SocialMediaSettings.twitter %}
+        <a href="{{ settings.site_settings.SocialMediaSettings.twitter }}">
+            <i class="bi bi-twitter"></i>
+        </a>
+    {% endif %}    
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+    </ul>
+  </footer>
+</div>
+
+{% endblock %}
+
+    {# Global javascript #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/blogalessionardineu.js' %}"></script>
+    {% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+    {% endblock %}
+</body>
+
+</html>
