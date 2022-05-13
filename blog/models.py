@@ -1,6 +1,8 @@
 from django.db import models
 from django.shortcuts import render
 
+from django_extensions.db.fields import AutoSlugField
+
 from django import forms
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
@@ -75,11 +77,13 @@ register_snippet(BlogAuthor)
 class BlogCategory(models.Model):
 	"""Blog category for a snippet"""
 	name = models.CharField(max_length=255)
-	slug = models.SlugField(
+	slug = AutoSlugField(
+		populate_from="name",
 		verbose_name="slug", 
 		allow_unicode=True,
 		max_length=255,
-		help_text='A slug to identify posts by this category'
+		help_text='A slug to identify posts by this category',
+
 		)
 
 	panels = [
