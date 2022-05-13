@@ -36,21 +36,6 @@ class HomePage(RoutablePageMixin, Page):
     max_count = 1
     banner_title = models.CharField(max_length=100, blank=False, null=True) 
     banner_subtitle = RichTextField(features=["bold", "italic"])
-    banner_image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=False,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        )
-
-    banner_cta = models.ForeignKey(
-        "wagtailcore.Page",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        )
 
     content = StreamField(
         [            
@@ -65,8 +50,6 @@ class HomePage(RoutablePageMixin, Page):
         MultiFieldPanel([
             FieldPanel("banner_title"),
             FieldPanel("banner_subtitle"),
-            ImageChooserPanel("banner_image"),        
-            PageChooserPanel("banner_cta"),
             ], heading="Banner Options"),
         MultiFieldPanel([
             InlinePanel("carousel_images", max_num=5, min_num=1, label="Image"),
