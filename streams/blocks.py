@@ -3,6 +3,9 @@
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
+from wagtailmarkdown.blocks import MarkdownBlock
+
+
 class TitleAndTextBlock(blocks.StructBlock):
 	"""Title and text and nothing else."""
 
@@ -119,3 +122,7 @@ class ButtonBlock(blocks.StructBlock):
 		icon = "placeholder"
 		label = "Single Button"
 		value_class = LinkStructValue
+
+
+class BodyBlock(blocks.StructBlock):
+    markdown = MarkdownBlock(icon="code", help_text="Markdown syntax, easily convertible from latex. It supports document and image linking")

@@ -178,6 +178,7 @@ class BlogDetailPage(Page):
 			("cards", blocks.CardBlock()),
 			("cta", blocks.CTABlock()),
 			("image", blocks.ImageBlock()),
+			("markdown", blocks.BodyBlock()),
 
 		],
 		null=True,

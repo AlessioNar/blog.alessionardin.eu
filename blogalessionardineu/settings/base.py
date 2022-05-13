@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
+    'wagtailmarkdown',
+
+
     'modelcluster',
     'taggit',
 
@@ -164,8 +167,8 @@ MEDIA_URL = '/media/'
 
 
 # Wagtail settings
-
-WAGTAIL_SITE_NAME = "blogalessionardineu"
+# @todo this may break
+WAGTAIL_SITE_NAME = "blog.alessionardin.eu"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -181,3 +184,11 @@ BASE_URL = 'blog.alessionardin.eu'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+WAGTAILMARKDOWN = {
+    "autodownload_fontawesome": False,
+    "allowed_tags": [],  # optional. a list of HTML tags. e.g. ['div', 'p', 'a']
+    "allowed_styles": [],  # optional. a list of styles
+    "allowed_attributes": {},  # optional. a dict with HTML tag as key and a list of attributes as value
+    "extensions": [],  # optional. a list of python-markdown supported extensions
+    "extension_configs": {},  # optional. a dictionary with the extension name as key, and its configuration as value
+}

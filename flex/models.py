@@ -20,6 +20,7 @@ class FlexPage(Page):
 			("cta", blocks.CTABlock()),
 			("button", blocks.ButtonBlock()),
 			("image", blocks.ImageBlock()),
+			("markdown", blocks.BodyBlock()),
 
 		],
 		null=True,
