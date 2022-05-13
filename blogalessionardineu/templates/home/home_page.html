@@ -1,30 +1,28 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 {% block content %}
-{% image self.banner_image width-1500 as img %}
-<!--<div class="container-fluid py-5" style="background-image: url('{{img.url}}'); background-size:cover; background-position: center center; ">
-    <div class="m-4 text-center">
-        
-    </div>
-</div>-->
 
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
     
     <div class="carousel-inner">
+
     {% for loop_cycle in self.carousel_images.all %}
-        {% image loop_cycle.carousel_image fill-900x200 as img %}
+        {% image loop_cycle.carousel_image width-1000 as img %}
+
         <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
-            <img src="{{ img.url }}" class="d-block w-100" alt="{{img.alt}}">
-            <div class="carousel-caption d-none d-md-block">
-                <h1 class="fw-bold">{{ self.banner_title }}</h1>
-                <p class="fs-4">{{self.banner_subtitle|richtext}}</p>
-                {% if self.banner_cta %}
-                    <button class="btn btn-primary btn-lg" type="button">@todo</button>
-                {% endif %}
+            <img src="{{ img.url }}" class="d-block w-100" alt="{{img.alt}}" style="max-height: 20em;">
+            <div class="carousel-caption">                
+                <h1 class="fw-bold">{{ self.banner_title }}</h1>                
+                {% if self.banner_subtitle %}
+                    <p class="fs-4">{{self.banner_subtitle|richtext}}</p>
+                {% endif %}                
             </div>                   
-        </div>        
+        </div>
+
     {% endfor %}
+
     </div>
+
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
@@ -34,10 +32,11 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
 <div class="container my-4">
     {% for block in page.content %}
     {% include_block block %}
-    {% endfor %}
+    {% endfor %}    
 </div>
 {% endblock %}
 
