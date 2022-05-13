@@ -186,7 +186,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 WAGTAILMARKDOWN = {
     "autodownload_fontawesome": False,
-    "allowed_tags": [],  # optional. a list of HTML tags. e.g. ['div', 'p', 'a']
+    "allowed_tags": ['div', 'p', 'a'],  # optional. a list of HTML tags. e.g. ['div', 'p', 'a']
     "allowed_styles": [],  # optional. a list of styles
     "allowed_attributes": {},  # optional. a dict with HTML tag as key and a list of attributes as value
     "extensions": [],  # optional. a list of python-markdown supported extensions
