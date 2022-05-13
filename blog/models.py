@@ -8,7 +8,8 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, MultiFieldPanel, InlinePanel
 
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import StreamField
+from wagtail.core.fields import StreamField, RichTextField
+
 
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
@@ -161,6 +162,12 @@ class BlogDetailPage(Page):
 		on_delete=models.SET_NULL,
 		)
 
+	intro = RichTextField(
+		blank=True, 
+		null=True,
+		help_text='Intro text for preview'
+		)
+
 	content = StreamField(
 		[
 			("title_and_text", blocks.TitleAndTextBlock()),
@@ -177,14 +184,15 @@ class BlogDetailPage(Page):
 	categories = ParentalManyToManyField("blog.BlogCategory", blank=True)
 
 	content_panels = Page.content_panels + [
-		FieldPanel("custom_title"),
-		ImageChooserPanel("banner_image"),
+		MultiFieldPanel([
+			FieldPanel("custom_title"),
+			FieldPanel("intro"),
+			ImageChooserPanel("banner_image"),
+			FieldPanel("categories", widget=forms.CheckboxSelectMultiple),
+			], heading="Details"),
 		MultiFieldPanel([
 			InlinePanel("blog_authors", label = "Author", min_num=1, max_num=4),
-			], heading="Author(s)"),
-		MultiFieldPanel([
-			FieldPanel("categories", widget=forms.CheckboxSelectMultiple)			
-			], heading="Categories"),
+			], heading="Author(s)"),		
 		StreamFieldPanel("content"),
 	]
 
