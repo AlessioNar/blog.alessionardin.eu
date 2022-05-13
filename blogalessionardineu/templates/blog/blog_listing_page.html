@@ -4,31 +4,44 @@
 
 {% block content %}
 	<a href="{% routablepageurl page 'latest_posts' %}">View Latest posts only</a>
-		<h2>Categories</h2>
-		<ul>
-		{% for cat in categories %}
-			<li>
-				<a href="?category={{cat.slug}}">
-					{{ cat.name }}
-				</a>
-			</li>
-		{% endfor %}
-		</ul>
+
 	<div class="container my-4">
-	{% for post in posts %}
-		<div class="row">
-			<div class="col-sm-3">
-				{% image post.banner_image fill-250x250 as blog_img %}
-				<a href="{{post.url}}">
-				<img src="{{blog_img.url}}" alt="{{blog_img.alt}}">
-				</a>
-			</div>
-			<div class="col-sm-9">
-				<a href="{{ post.url}}">
-					{{ post.custom_title }}
-				</a>
-			</div>
-		</div>
-	{% endfor %}
+		<ul class="nav nav-pills">
+		{% for cat in categories %}
+		  <li class="nav-item">
+		  <!-- @todo, if the category is the one active, change button style to active and vice versa -->
+		    <a class="nav-link active" href="?category={{cat.slug}}">{{ cat.name }}</a>
+		  </li>      
+		{% endfor %}
+		</ul>		
 	</div>
+	
+<div class="container my-4">
+    <h2 class="text-center my-4">Latest Blog Posts</h2>
+    <div class="row">
+    {% for post in posts %}
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card text-white bg-secondary mb-3">
+            {% image post.banner_image max-700x500 as blog_img %}
+            <div class="row">
+            <div class="col-12"
+                    <a href="{{post.url}}">
+                    <img src="{{blog_img.url}}" alt="{{blog_img.alt}}" style="width: 100%">
+                    </a>
+                    </div>
+                    </div>
+                <div class="card-header">
+                    <a href="{{ post.url}}">
+                        {{ post.custom_title }}
+                    </a>
+                </div>
+                <div class="card-body">                
+                    <p class="card-text">{{post.subtitle}}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="clearfix"></div>
+    </div>
+</div>
 {% endblock %}
