@@ -7,36 +7,41 @@
 		{% image self.banner_image width-1000 as banner %}
 		
 		<img src="{{ banner.url }}" alt="{{ banner.alt }}" style="width: 100%; max-height: 20rem; object-fit: cover;">
-		<div class="container my-5">
+		<div class="container my-4">
 			<div class="text-center">
 				<h1>{{ self.custom_title }}</h1>
-			</div>			
-			<ul>
+			</div>						
+		</div>
+		
+		<div class="container my-4">
+		<div class="row ">
+		<div class="col-md-7 col-sm-12">
+		<ul class="nav nav-pills">		
+		{% for cat in self.categories.all %}
+		  <li class="nav-item">
+		  <!-- @todo, if the category is the one active, change button style to active and vice versa -->
+		    <a class="nav-link active" href="{{self.get_parent.url}}?category={{cat.slug}}">{{ cat.name }}</a>
+		  </li>      
+		{% endfor %}
+		</ul>		
+		</div>
+		<div class="col-md-5 col-sm-12">			
 				{% for iter in self.blog_authors.all %}
 					{% image iter.author.image fill-50x50 as img %}
-				<li>
-				<img src="{{img.url}}" alt="{{iter.author.name}}">
-				{{ iter.author.name }}
-				{% if iter.author.website %}
-					<a href="{{iter.author.website}}">
-					(website)
-					</a>
-				{% endif %}
-				</li>
-				{% endfor %}
-			</ul>
+					<div class="float-md-end">
+					<img src="{{img.url}}" alt="{{iter.author.name}}" style="border-radius: 50%;">
+					{% if iter.author.website %}
+						<a href="{{iter.author.website}}">
+					{% endif %}
+					{{ iter.author.name }}
+					{% if iter.author.website %}
+						</a>
+					{% endif %}			
+					</div>
+				{% endfor %}			
 		</div>
-
-		<h2>Categories</h2>
-		<ul>
-		{% for cat in self.categories.all %}
-			<li>
-				<a href="{{self.get_parent.url}}?category={{cat.slug}}">
-					{{ cat.name }}
-				</a>
-			</li>
-		{% endfor %}
-		</ul>
+		</div>
+		</div>
 
 		
 		<div class="container">
