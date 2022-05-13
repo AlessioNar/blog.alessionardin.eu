@@ -11,6 +11,8 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
 from streams import blocks
 
+from blog.models import BlogDetailPage
+
 class HomePageCarouselImages(Orderable):
     """Between 1 and 5 images for the home page carousel."""
 
@@ -58,6 +60,12 @@ class HomePage(RoutablePageMixin, Page):
         
 
     ]
+
+    def get_context(self, request, *args, **kwargs):
+        """Adding the four latest posts"""
+        context = super().get_context(request, *args, **kwargs)        
+        context["posts"] = BlogDetailPage.objects.live().public()[:4]
+        return context
 
     class Meta:
 
