@@ -24,8 +24,8 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    #'home',
-    #'search',
+    'home',
+    'search',
     #'flex',
     #'streams',
     #'site_settings',
