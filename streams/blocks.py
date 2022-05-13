@@ -14,6 +14,18 @@ class TitleAndTextBlock(blocks.StructBlock):
 		icon = "edit"
 		label = "Title & Text"
 
+class ImageBlock(blocks.StructBlock):
+	"""Simple Image insertion block"""
+
+	caption = blocks.CharBlock(required=False, max_length=200, help_text="Add a caption"),
+	image = ImageChooserBlock(required=True)
+
+	class Meta: # noqa
+		template = "streams/image_block.html"
+		icon = "image"
+		label = "Image"
+
+
 class CardBlock(blocks.StructBlock):
 	"""Cards with image and text and button(s)"""
 

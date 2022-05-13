@@ -19,6 +19,7 @@ class FlexPage(Page):
 			("cards", blocks.CardBlock()),
 			("cta", blocks.CTABlock()),
 			("button", blocks.ButtonBlock()),
+			("image", blocks.ImageBlock()),
 
 		],
 		null=True,

@@ -1,0 +1,9 @@
+{% load wagtailimages_tags %}
+<div class="container my-3">
+    <div class="row">
+        <div class="col-12">
+            {% image self.image width-1000 as img %}
+            <img src="{{img.url}}" alt="{{img.alt}}" style="width: 100%; max-height: 30rem; object-fit: cover;">
+        </div>
+    </div>
+</div>

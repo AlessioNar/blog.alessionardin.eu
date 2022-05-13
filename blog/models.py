@@ -177,6 +177,7 @@ class BlogDetailPage(Page):
 			("simple_richtext", blocks.SimpleRichtextBlock()),
 			("cards", blocks.CardBlock()),
 			("cta", blocks.CTABlock()),
+			("image", blocks.ImageBlock()),
 
 		],
 		null=True,
