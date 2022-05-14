@@ -6,16 +6,21 @@
 {% block content %}
 
 		<!-- Banner Image -->
-		{% image self.banner_image width-1000 as banner %}		
-		<img src="{{ banner.url }}" alt="{{ banner.alt }}" style="width: 100%; max-height: 20rem; object-fit: cover;">
-
+		{% image self.banner_image width-1000 as banner %}				
 		<!-- Title -->
-		<div class="container my-4">
-			<div class="text-center">
-				<h1>{{ self.custom_title }}</h1>
-			</div>						
-		</div>
+		<div  style="position: relative; width:100%;">
+		<img src="{{ banner.url }}" class="w-100" alt="{{banner.alt}}" style="width: 100%; max-height: 20rem;">
+		<h1 class="fs-1" style="position: absolute; top: 50%; width: 100%; text-align: center; ">{{self.custom_title}}</h1>		
 		
+		</div>
+		<div class="container">
+		<div class="row mt-5 fs-2">
+		<div class="col-12">
+		{{self.intro|richtext}}
+		</div>
+		</div>
+		</div>
+
 		<!-- Categories and Author -->
 		<div class="container my-4">
 			<div class="row">
