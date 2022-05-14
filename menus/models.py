@@ -17,7 +17,7 @@ from wagtail.core.models import Orderable
 from wagtail.snippets.models import register_snippet
 
 # @todo add as an Orderable Clusterable Model
-class MenuItem(ClusterableModel):
+class MenuItem(ClusterableModel, Orderable):
 	link_title = models.CharField(blank=True, null=True, max_length=50)
 	link_url = models.CharField(blank=True, null=True, max_length=500)
 	link_page = models.ForeignKey(
@@ -113,6 +113,6 @@ class MenuSubItem(Orderable):
 		elif self.link_title:
 			return self.link_title
 		return 'Missing Title'
-	
+
 	def __str__(self):
 		return self.title
