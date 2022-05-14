@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
+
     'wagtailmarkdown',
 
 
@@ -183,12 +184,3 @@ WAGTAILSEARCH_BACKENDS = {
 BASE_URL = 'blog.alessionardin.eu'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
-WAGTAILMARKDOWN = {
-    "autodownload_fontawesome": False,
-    "allowed_tags": ['div', 'p', 'a'],  # optional. a list of HTML tags. e.g. ['div', 'p', 'a']
-    "allowed_styles": [],  # optional. a list of styles
-    "allowed_attributes": {},  # optional. a dict with HTML tag as key and a list of attributes as value
-    "extensions": [],  # optional. a list of python-markdown supported extensions
-    "extension_configs": {},  # optional. a dictionary with the extension name as key, and its configuration as value
-}

@@ -42,9 +42,21 @@
             <div class="collapse navbar-collapse" id="navbarColor02">
                 
                 <ul class="navbar-nav ms-auto">                    
-                    {% for item in navigation.menu_items.all %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{item.link}}" {% if item.open_in_new_tab %} target="_blank"{% endif %}>{{item.title}}</a>
+                    {% for item in navigation.menu_items.all %}                        
+                        <li class="nav-item">
+                            <a href="{{item.link}}" class="nav-link">{{item.title}}</a>
+                            <p>{% if item.menu_subitems == None %}TEST{%endif %}</p>
+                            {% for subitem in item.menu_item.menu_subitems.all %}
+
+                                {{ subitem }}
+
+                            {% endfor %}
+<!--                        
+
+                            {% if item.menu_subitems.all %}         
+                            {% if item.menu_subitems.all %} dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"{% endif %}                   
+                                                   
+                            {% endif %}-->
                     </li>                                        
                     {% endfor %}
                 </ul>
