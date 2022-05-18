@@ -10,8 +10,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, MultiFieldPanel, InlinePanel
 
 from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import StreamField, RichTextField
-
+from wagtail.core.fields import RichTextField, StreamField
 
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 

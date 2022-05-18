@@ -8,7 +8,9 @@ from wagtail.core.fields import StreamField
 from streams import blocks
 
 class FlexPage(Page):
+	
 	"""Flexible page class"""
+	
 	template = "flex/flex_page.html"
 
 	content = StreamField(
