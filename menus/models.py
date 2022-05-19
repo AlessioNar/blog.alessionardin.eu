@@ -10,16 +10,40 @@ from wagtail.admin.edit_handlers import (
 	FieldPanel, 
 	MultiFieldPanel, 
 	InlinePanel, 
-	PageChooserPanel
+	PageChooserPanel,
+
 	)
 
 from wagtail.core.models import Orderable
 from wagtail.snippets.models import register_snippet
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-# @todo add as an Orderable Clusterable Model
+	
+
+@register_snippet
+class Menu(ClusterableModel):
+	"""The main menu clusterable model"""
+
+	title = models.CharField(max_length=100)
+	slug = AutoSlugField(populate_from="title", editable=True)
+
+	panels = [
+		MultiFieldPanel([
+			FieldPanel("title"),
+			FieldPanel("slug"),			
+			], heading="Menu"),
+		InlinePanel("menu_items", label="Menu Item")
+	]
+
+	def __str__(self):
+		return self.title
+
 class MenuItem(ClusterableModel, Orderable):
+	"""The first level of the Menu"""
+	
 	link_title = models.CharField(blank=True, null=True, max_length=50)
 	link_url = models.CharField(blank=True, null=True, max_length=500)
+	
 	link_page = models.ForeignKey(
 		"wagtailcore.Page", 
 		null=True, 
@@ -28,7 +52,20 @@ class MenuItem(ClusterableModel, Orderable):
 		on_delete=models.SET_NULL
 		)
 
+	submenu = models.ForeignKey(
+		"SubmenuItem", 
+		null=True, 
+		blank=True, 
+		related_name="+", 
+		on_delete=models.SET_NULL
+		)
+
+	# Tags used to pick up pages
+	#tags = models.
+
 	open_in_new_tab = models.BooleanField(default=False, blank=True)
+
+	# The connection to the main menu
 	page = ParentalKey("Menu", related_name="menu_items")
 
 	panels = [	
@@ -36,9 +73,12 @@ class MenuItem(ClusterableModel, Orderable):
 		FieldPanel("link_title"),
 		FieldPanel("link_url"),
 		PageChooserPanel("link_page"),
+	#	FieldPanel("tags"),
 		FieldPanel("open_in_new_tab"),				
 	], heading="Menu"),
-		InlinePanel("menu_subitems", label="Menu Subitem")
+	
+	# The connection with the lower level of the menu
+	InlinePanel("submenu_items", label="Submenu item")
 
 	]
 
@@ -57,31 +97,13 @@ class MenuItem(ClusterableModel, Orderable):
 		elif self.link_title:
 			return self.link_title
 		return 'Missing Title'
-	
 
-@register_snippet
-class Menu(ClusterableModel):
-	"""The main menu clusterable model"""
+class SubmenuItem(Orderable):
 
-	title = models.CharField(max_length=100)
-	slug = AutoSlugField(populate_from="title", editable=True)
-
-
-	panels = [
-		MultiFieldPanel([
-			FieldPanel("title"),
-			FieldPanel("slug"),			
-			], heading="Menu"),
-		InlinePanel("menu_items", label="Menu Item")
-	]
-
-	def __str__(self):
-		return self.title
-
-class MenuSubItem(Orderable):
 	"""Subclassing menu items to create sublists"""
 	link_title = models.CharField(blank=True, null=True, max_length=50)
 	link_url = models.CharField(blank=True, null=True, max_length=500)
+
 	link_page = models.ForeignKey(
 		"wagtailcore.Page", 
 		null=True, 
@@ -90,12 +112,14 @@ class MenuSubItem(Orderable):
 		on_delete=models.SET_NULL
 		)
 
-	menu_item = ParentalKey("MenuItem", related_name="menu_subitems")
+	menu_item = ParentalKey("MenuItem", related_name="submenu_items")
 
-	panels = [		
+	panels = [	
+	MultiFieldPanel([	
 			FieldPanel("link_title"),
 			FieldPanel("link_url"),
 			PageChooserPanel("link_page"),
+			], heading="Menu Item"),
 	]
 
 	@property

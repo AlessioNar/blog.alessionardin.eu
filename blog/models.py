@@ -233,3 +233,10 @@ class ArticleBlogPage(BlogDetailPage):
 			], heading="Categories"),
 		StreamFieldPanel("content"),
 	]
+
+	#class BlogStaticPage(Page):
+#		"""Html-Ready Page, to be used with static-site generators such as Hugo and Rmarkdown Files"""
+
+		#template  = "blog/blog_static_page.html"
+	
+		#intro = models.DocumentField 
