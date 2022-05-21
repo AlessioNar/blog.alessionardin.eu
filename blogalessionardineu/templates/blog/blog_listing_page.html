@@ -11,7 +11,7 @@
 		<ul class="nav nav-pills">
 		<li class="nav-item">		  
 			<!--@todo link to blog listing page -->
-		    <a class="nav-link active" href="{% pageurl page.get_parent %}">All</a>
+		    <a class="nav-link active" href="{% pageurl page %}">All</a>
 		  </li>      
 		{% for cat in categories %}
 		  <li class="nav-item">
@@ -34,7 +34,7 @@
 -->
 
 <div class="container my-4">
-    <h2 class="text-center my-4">Latest Blog Posts about {{this_cat}}</h2>
+    <h2 class="text-center my-4">{{this_cat}} Blog Posts</h2>
     <br/><br/>
     <div class="row">
     {% for post in posts %}
