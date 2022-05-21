@@ -42,7 +42,7 @@
 
             <div class="collapse navbar-collapse" id="navbarColor02">
                 
-                <ul class="navbar-nav ms-auto"> 
+                <ul class="navbar-nav ms-auto "> 
                             
                     {% for item in navigation.menu_items.all %}                        
 
@@ -50,19 +50,24 @@
                         {% if item.submenu_items.all %}
                         <li class="nav-item dropdown">
 
-                        <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown"  role="button" aria-haspopup="true" aria-expanded="true" href="#">{{item.title}}</a>
-                        <div class="dropdown-menu show " data-bs-popper="dropdown">
-                        {% for subitem in item.submenu_items.all %}             
-                                                             
-                                 <a class="dropdown-item" href="{{subitem.link}}" id="dropdown">{{subitem.title}} </a>                                 
-                                {% endfor %}                             
-                             </div>
+                        <a class="nav-link dropdown-toggle text-white text-decoration-none" data-bs-toggle="dropdown"  role="button" aria-haspopup="true" aria-expanded="true" href="#" id="navbarDropdownBlog">{{item.title}}</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+
+                        
+                        {% for subitem in item.submenu_items.all %}                                          
+                                 <li class="dropdown-item"  id="dropdown">
+                                 <a href="{{subitem.link}}" class="text-white text-decoration-none">{{subitem.title}} </a>
+                                 </li>                                 
+                        {% endfor %}                             
+                        </ul>
                         </li>
+                                                 
 
                         {% else %}
+
  
                         <li class="nav-item">
-                            <a class="nav-link" href="{{item.link}}">{{item.title}}</a>
+                            <a class="nav-link text-white text-decoration-none" href="{{item.link}}">{{item.title}}</a>
                         </li>
 
                         {% endif %}

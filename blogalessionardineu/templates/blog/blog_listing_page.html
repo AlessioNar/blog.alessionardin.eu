@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
 {% load wagtailimages_tags wagtailroutablepage_tags %}
+{% load wagtailcore_tags %}
+
 
 {% block content %}
 	
-
 	<div class="container my-4">
+	<br/><br/>
 		<ul class="nav nav-pills">
 		<li class="nav-item">		  
-		    <a class="nav-link active" href="#">All</a>
+			<!--@todo link to blog listing page -->
+		    <a class="nav-link active" href="{% pageurl page.get_parent %}">All</a>
 		  </li>      
 		{% for cat in categories %}
 		  <li class="nav-item">
 		  <!-- @todo, if the category is the one active, change button style to active and vice versa -->
-		    <a class="nav-link active" href="?category={{cat.slug}}">{{ cat.name }}</a>
+		    <a class="nav-link active" href="?tags={{cat.slug}}">{{ cat.name }}</a>
 		  </li>      
 		{% endfor %} 
 		</ul>		

@@ -117,8 +117,8 @@ class BlogListingPage(RoutablePageMixin, Page):
 		"""Adding custom elements to our context"""
 
 		context = super().get_context(request, *args, **kwargs)
-		if request.GET.get('category'):
-			context["posts"] = BlogDetailPage.objects.live().public().filter(categories__slug__in=[request.GET.get('category')])
+		if request.GET.get('tags'):
+			context["posts"] = BlogDetailPage.objects.live().public().filter(tags__slug__in=[request.GET.get('tags')])
 		else:
 			context["posts"] = BlogDetailPage.objects.live().public()
 
@@ -155,6 +155,8 @@ class BlogDetailPage(Page):
 		help_text='Overwrites the default title',
 		)
 
+	tags = ParentalManyToManyField("blog.BlogCategory", blank=True)
+
 	banner_image = models.ForeignKey(
 		"wagtailimages.Image",
 		null=True,
@@ -184,21 +186,30 @@ class BlogDetailPage(Page):
 		blank=True
 	)
 
-	categories = ParentalManyToManyField("blog.BlogCategory", blank=True)
+	other_info = RichTextField(
+		blank=True, 
+		null=True,
+		help_text='Intro text for preview'
+		)
+
 
 	content_panels = Page.content_panels + [
+		MultiFieldPanel([
+						FieldPanel("intro"),
+						ImageChooserPanel("banner_image"),
+						FieldPanel("tags", widget=forms.CheckboxSelectMultiple),
+			]),
 		StreamFieldPanel("content"),
 
 		MultiFieldPanel([
-			FieldPanel("custom_title"),
-			FieldPanel("intro"),
-			ImageChooserPanel("banner_image"),
-			FieldPanel("categories", widget=forms.CheckboxSelectMultiple),
-			], heading="Details"),
-		MultiFieldPanel([
 			InlinePanel("blog_authors", label = "Author", min_num=1, max_num=4),
-			], heading="Author(s)"),		
+			FieldPanel("custom_title"),
+			], heading="Details"),
+		MultiFieldPanel([			
+			FieldPanel("other_info"),
+			], heading="Other"),		
 	]
+
 
 class ArticleBlogPage(BlogDetailPage):
 	"""A subclassed blog post page for articles"""
@@ -229,13 +240,13 @@ class ArticleBlogPage(BlogDetailPage):
 			InlinePanel("blog_authors", label = "Author", min_num=1, max_num=4),
 			], heading="Author(s)"),
 		MultiFieldPanel([
-			FieldPanel("categories", widget=forms.CheckboxSelectMultiple)			
-			], heading="Categories"),
+			FieldPanel("tags", widget=forms.CheckboxSelectMultiple)			
+			], heading="Tags"),
 		StreamFieldPanel("content"),
 	]
 
 	#class BlogStaticPage(Page):
-#		"""Html-Ready Page, to be used with static-site generators such as Hugo and Rmarkdown Files"""
+#b		"""Html-Ready Page, to be used with static-site generators such as Hugo and Rmarkdown Files"""
 
 		#template  = "blog/blog_static_page.html"
 	

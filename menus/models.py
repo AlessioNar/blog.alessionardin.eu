@@ -1,6 +1,7 @@
 """Menus models."""
 from django.db import models
 
+
 from django_extensions.db.fields import AutoSlugField
 
 from modelcluster.fields import ParentalKey
@@ -13,12 +14,11 @@ from wagtail.admin.edit_handlers import (
 	PageChooserPanel,
 
 	)
+from blog.models import BlogCategory
 
 from wagtail.core.models import Orderable
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
-
-	
 
 @register_snippet
 class Menu(ClusterableModel):
@@ -60,9 +60,6 @@ class MenuItem(ClusterableModel, Orderable):
 		on_delete=models.SET_NULL
 		)
 
-	# Tags used to pick up pages
-	#tags = models.
-
 	open_in_new_tab = models.BooleanField(default=False, blank=True)
 
 	# The connection to the main menu
@@ -98,6 +95,14 @@ class MenuItem(ClusterableModel, Orderable):
 			return self.link_title
 		return 'Missing Title'
 
+	@property
+	def id(self):
+		if self.link_page and not self.link_title:
+			return self.link_page.title
+		elif self.link_title:
+			return self.link_title
+		return 'Missing Title'
+
 class SubmenuItem(Orderable):
 
 	"""Subclassing menu items to create sublists"""
@@ -111,23 +116,39 @@ class SubmenuItem(Orderable):
 		related_name="+", 
 		on_delete=models.SET_NULL
 		)
+	
 
+	tags = models.ForeignKey(
+		"blog.BlogCategory", 
+		null=True, 
+		blank=True, 
+		related_name="+", 
+		on_delete=models.SET_NULL
+		)
+		
 	menu_item = ParentalKey("MenuItem", related_name="submenu_items")
 
 	panels = [	
 	MultiFieldPanel([	
 			FieldPanel("link_title"),
-			FieldPanel("link_url"),
-			PageChooserPanel("link_page"),
+			MultiFieldPanel([
+				FieldPanel("link_url"),
+				PageChooserPanel("link_page"),
+				FieldPanel("tags"),
+				], heading="Urls")
+			
 			], heading="Menu Item"),
 	]
 
 	@property
 	def link(self):
-		if self.link_page:
-			return self.link_page.url
+		if self.tags:
+			tag_url = '/blog/?tags='+ self.tags.slug
+			return tag_url		
 		elif self.link_url:
 			return self.link_url
+		elif self.link_page:
+			return self.link_page.url
 		return "#"
 
 	@property

@@ -41,7 +41,14 @@ class HomePage(RoutablePageMixin, Page):
 
     content = StreamField(
         [            
+            
+            ("title_and_text", blocks.TitleAndTextBlock()),
+            ("full_richtext", blocks.RichtextBlock()),
+            ("simple_richtext", blocks.SimpleRichtextBlock()),
+            ("cards", blocks.CardBlock()),
             ("cta", blocks.CTABlock()),
+            ("image", blocks.ImageBlock()),
+            ("markdown", blocks.BodyBlock()),
         ],
         null=True,
         blank=True

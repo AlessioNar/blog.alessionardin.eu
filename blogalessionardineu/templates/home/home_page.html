@@ -34,11 +34,13 @@
     {% endif %}
 </div>
 
-<div class="container my-4">
+
     {% for block in page.content %}
-    {% include_block block %}
+    <div class="container my-4">        
+            {% include_block block %}
+    </div>        
     {% endfor %}    
-</div>
+
 
 {% if posts %}
 <div class="container my-4">
