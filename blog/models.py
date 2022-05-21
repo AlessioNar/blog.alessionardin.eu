@@ -117,12 +117,17 @@ class BlogListingPage(RoutablePageMixin, Page):
 		"""Adding custom elements to our context"""
 
 		context = super().get_context(request, *args, **kwargs)
+		if request.GET.get('category'):
+			context["category"] = BlogDetailPage.objects.live().public().filter()
+
+
 		if request.GET.get('tags'):
 			context["posts"] = BlogDetailPage.objects.live().public().filter(tags__slug__in=[request.GET.get('tags')])
 		else:
 			context["posts"] = BlogDetailPage.objects.live().public()
 
 		context["categories"] = BlogCategory.objects.all()
+		context['this_cat'] = BlogCategory.objects.filter(name=request.GET.get('tags'))
 		return context
 
 	@route(r'^latest/$', name = "latest_posts")
@@ -142,6 +147,8 @@ class BlogListingPage(RoutablePageMixin, Page):
 				"priority": 0.9,
 			})
 		return sitemap
+
+
 
 class BlogDetailPage(Page):
 	"""Parental Blog Detail Page."""
