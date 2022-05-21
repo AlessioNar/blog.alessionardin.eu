@@ -114,20 +114,26 @@ class BlogListingPage(RoutablePageMixin, Page):
 
 	]
 
+	# @todo I have to intervene here to create a general listing page
 	def get_context(self, request, *args, **kwargs):
 		"""Adding custom elements to our context"""
 
 		context = super().get_context(request, *args, **kwargs)
 
-		if request.GET.get('tags'):
-			context['this_cat'] = BlogCategory.objects.get(slug=request.GET.get('tags'))
-			context["posts"] = BlogDetailPage.objects.live().public().filter(tags__slug__in=[request.GET.get('tags')])
-		else:
-			context["posts"] = BlogDetailPage.objects.live().public()
+		if request.GET.get('category'):
 
-		context["categories"] = BlogCategory.objects.all()
-		
-		return context
+			context['this_cat'] = BlogCategory.objects.get(slug=request.GET.get('tags'))
+
+			if request.GET.get('tags'):
+				context['this_cat'] = BlogCategory.objects.get(slug=request.GET.get('tags'))
+				context["posts"] = BlogDetailPage.objects.live().public().filter(tags__slug__in=[request.GET.get('tags')])
+			else:
+				context["posts"] = BlogDetailPage.objects.live().public()
+
+			context["categories"] = BlogCategory.objects.all()
+			
+			return context
+
 
 	@route(r'^latest/$', name = "latest_posts")
 	def latest_blog_posts(self, request, *args, **kwargs):
