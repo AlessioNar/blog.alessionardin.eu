@@ -143,7 +143,7 @@ class SubmenuItem(Orderable):
 	@property
 	def link(self):
 		if self.tags:
-			tag_url = '/blog/?tags='+ self.tags.slug
+			tag_url = str(self.link_page.url) + '?tags='+ self.tags.slug
 			return tag_url		
 		elif self.link_url:
 			return self.link_url
