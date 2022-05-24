@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% load wagtailimages_tags wagtailroutablepage_tags %}
-{% load wagtailcore_tags %}
+{% load static wagtailcore_tags %}
 
 
 {% block content %}
@@ -9,24 +9,36 @@
 	<div class="container my-4">
 	<br/><br/><br/><br/>
 		<ul class="nav nav-pills">
-		<li class="nav-item">		  
-			<!--@todo link to blog listing page -->
-		    <a class="nav-link active" href="{% pageurl page %}">All</a>
-		  </li>      
-		{% for cat in categories %}
-		  <li class="nav-item">
-		  <!-- @todo, if the category is the one active, change button style to active and vice versa -->
-		    <a class="nav-link active" href="?tags={{cat.slug}}">{{ cat.name }}</a>
-		  </li>      
-		{% endfor %} 
-		</ul>		
+		{% for item in page.get_children.live.in_menu %}
+        <li class="{{ item.active_class }}">
+          <a href="{% pageurl item %}">{{ item.title }}</a>
+          {% for subitem in item.get_children.live.in_menu %}
+             <li><a href="{% pageurl subitem %}{{ subitem.title }}"></a></li>
+          {% empty %}
+             {% for sib in item.get_siblings.live.in_menu %}
+                 <li><a href="{% pageurl sib %} {{ sib.title }}"></a></li>
+             {% endfor %}
+          {% endfor %}
+        </li>
+		{% endfor %}
+
+	</ul>
+		  		
 	</div>
 	<br/><br/>
+
+	{% load static wagtailcore_tags %}
+
+
+  <ul class="nav sidenav dropable sticky">
+  </ul>
+  
+</aside>
 <!--
 	<div class="container my-4">
 		<div class="row">
 			<div class="col-lg-12">
-				<a href="{% routablepageurl page 'latest_posts' %}" class="btn btn-primary btn-primary-overlay">Latest</a>
+	{#			<a href="{% routablepageurl page 'latest_posts' %}" class="btn #} btn-primary btn-primary-overlay">Latest</a>
 			</div>
 		</div>
 
