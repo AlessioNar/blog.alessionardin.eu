@@ -169,7 +169,15 @@ class BlogDetailPage(Page):
 
 	tags = ParentalManyToManyField("blog.BlogCategory", blank=True)
 
-	banner_image = models.ForeignKey(
+	heading_image = models.ForeignKey(
+		"wagtailimages.Image",
+		null=True,
+		blank=False,
+		related_name="+",
+		on_delete=models.SET_NULL,
+		)
+
+	card_image = models.ForeignKey(
 		"wagtailimages.Image",
 		null=True,
 		blank=False,
@@ -192,23 +200,17 @@ class BlogDetailPage(Page):
 			("cta", blocks.CTABlock()),
 			("image", blocks.ImageBlock()),
 			("markdown", blocks.BodyBlock()),
-
+			# graph data block
 		],
 		null=True,
 		blank=True
 	)
 
-	other_info = RichTextField(
-		blank=True, 
-		null=True,
-		help_text='Intro text for preview'
-		)
-
-
 	content_panels = Page.content_panels + [
 		MultiFieldPanel([
 						FieldPanel("intro"),
-						ImageChooserPanel("banner_image"),
+						ImageChooserPanel("heading_image"),
+						ImageChooserPanel("card_image"),
 						FieldPanel("tags", widget=forms.CheckboxSelectMultiple),
 			]),
 		StreamFieldPanel("content"),
@@ -216,15 +218,11 @@ class BlogDetailPage(Page):
 		MultiFieldPanel([
 			InlinePanel("blog_authors", label = "Author", min_num=1, max_num=4),
 			FieldPanel("custom_title"),
-			], heading="Details"),
-		MultiFieldPanel([			
-			FieldPanel("other_info"),
-			], heading="Other"),		
+			], heading="Details"),		
 	]
 
-
+"""
 class ArticleBlogPage(BlogDetailPage):
-	"""A subclassed blog post page for articles"""
 
 	template = "blog/article_blog_page.html"
 
@@ -256,10 +254,4 @@ class ArticleBlogPage(BlogDetailPage):
 			], heading="Tags"),
 		StreamFieldPanel("content"),
 	]
-
-	#class BlogStaticPage(Page):
-#b		"""Html-Ready Page, to be used with static-site generators such as Hugo and Rmarkdown Files"""
-
-		#template  = "blog/blog_static_page.html"
-	
-		#intro = models.DocumentField 
+"""
