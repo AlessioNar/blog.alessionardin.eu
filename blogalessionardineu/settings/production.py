@@ -17,7 +17,7 @@ DATABASES = {
         }
     }
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS= ['194.233.171.61', "blog.alessionardin.eu", 'localhost']
 
