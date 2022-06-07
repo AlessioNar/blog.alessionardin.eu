@@ -1,80 +1,51 @@
 {% extends "base.html" %}
 
 {% load wagtailimages_tags wagtailroutablepage_tags %}
-{% load static wagtailcore_tags %}
+{% load wagtailcore_tags %}
 
 
 {% block content %}
-	
-	<div class="container my-4">
-	<br/><br/><br/><br/>
-		<ul class="nav nav-pills">
-		{% for item in page.get_children.live.in_menu %}
-        <li class="{{ item.active_class }}">
-          <a href="{% pageurl item %}">{{ item.title }}</a>
-          {% for subitem in item.get_children.live.in_menu %}
-             <li><a href="{% pageurl subitem %}{{ subitem.title }}"></a></li>
-          {% empty %}
-             {% for sib in item.get_siblings.live.in_menu %}
-                 <li><a href="{% pageurl sib %} {{ sib.title }}"></a></li>
-             {% endfor %}
-          {% endfor %}
-        </li>
-		{% endfor %}
+{% if self.heading_image %}
+    {% image self.heading_image max-2400x600 as heading_image %}
+		<img src="{{ heading_image.url }}" class="w-100 heading-image" alt="{{heading_image.alt}}">
 
-	</ul>
-		  		
-	</div>
-	<br/><br/>
+{% endif %}
 
-	{% load static wagtailcore_tags %}
-
-
-  <ul class="nav sidenav dropable sticky">
-  </ul>
-  
-</aside>
-<!--
-	<div class="container my-4">
-		<div class="row">
-			<div class="col-lg-12">
-	{#			<a href="{% routablepageurl page 'latest_posts' %}" class="btn #} btn-primary btn-primary-overlay">Latest</a>
-			</div>
-		</div>
-
-	</div>
--->
-
-<div class="container my-4">
-    <h2 class="text-center my-4">{{this_cat}} Blog Posts</h2>
-    <br/><br/>
-    <div class="row">
-    {% for post in posts %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card text-white bg-secondary mb-3">
-            {% image post.banner_image max-700x500 as blog_img %}
-            
-            
-
-            <div class="row">
-            <div class="col-12">
-                    <a href="{{post.url}}">
-                    <img src="{{blog_img.url}}" alt="{{blog_img.alt}}" style="width: 100%">
-                    </a>
-                    </div>
-                    </div>
-                <div class="card-header">
-                    <a href="{{ post.url}}">
-                        {{ post.custom_title }}
-                    </a>
-                </div>
-                <div class="card-body">                
-                    <p class="card-text">{{post.subtitle}}</p>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    <div class="clearfix"></div>
-    </div>
+<!-- Page title -->
+<div class="container mt-4">
+  <h1 class="my-5 text-center">{{self.heading}} {% if tag %} - {{tag|title}}{% endif %} </h1>
 </div>
+
+<!-- Blog List view -->
+{% if elements %}
+<div class="container">
+      <div class="row">
+              {% for element in elements %}
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <div class="card-item">
+                  {% image element.card_image max-500x500 as card_img %}
+                    <a href="{{element.url}}">
+                      <img src="{{card_img.url}}" alt="{{card_img.alt}}" class="card-img">
+                    </a>
+                    <div class="card-header center-vertically text-center">
+                        <a class="text-decoration-none fw-bold text-white" href="{{ element.url}}">
+                          <h5>
+                            {{ element.title }}
+                          </h5>
+                        </a>
+                        {% if element.intro %}
+
+                        <p>
+                        {{element.intro|richtext}}
+                        </p>
+                        {% endif  %}
+                    </div>
+
+                </div>
+                </div>
+                {% endfor %}
+      </div>
+</div>
+{% endif %}
+
 {% endblock %}

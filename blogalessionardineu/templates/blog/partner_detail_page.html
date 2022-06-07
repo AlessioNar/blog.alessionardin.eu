@@ -6,7 +6,7 @@
 {% block content %}
 
 
-<div class="container-fluid mt-4">
+<div class="container mt-4">
   {% image self.heading_image fill-2400x600 as heading_image %}
 
 	<!-- Page title -->
@@ -27,15 +27,6 @@
 {% for block in page.content %}
 	{% include_block block %}
 {% endfor %}
-
-		<!--{# Banner Image
-		{% image self.banner_image width-1000 as banner %}
-
-				<div  style="position: relative; width:100%;">
-		<img src="{{ banner.url }}" class="w-100" alt="{{banner.alt}}" style="width: 100%; max-height: 20rem;">
-		<h1 class="fs-1" style="position: absolute; top: 50%; width: 100%; text-align: center; ">{{self.title}}</h1>
-		</div>
-		#}-->
 
 
 {% endblock %}
