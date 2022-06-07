@@ -114,12 +114,11 @@ class BlogListingPage(RoutablePageMixin, Page):
 		"""Adding custom elements to our context"""
 
 		context = super().get_context(request, *args, **kwargs)
-		if self.category != None:
-			if request.GET.get('tags'):
-				context['tags'] = request.GET.get('tags')
+		if self.tags != None:
+			if self.category != None:
 				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=self.tags)
-			else:
-				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
+		elif self.category != None:
+			context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
 		else:
 			context['elements'] = BlogDetailPage.objects.live().public()
 
