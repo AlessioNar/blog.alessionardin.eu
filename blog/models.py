@@ -91,6 +91,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 		)
 
 
+
 	category = models.ForeignKey(
 		"blog.BlogCategory",
 		null=True,
@@ -99,10 +100,13 @@ class BlogListingPage(RoutablePageMixin, Page):
 		on_delete=models.SET_NULL,
 		)
 
+	tags = ParentalManyToManyField(BlogTag, blank=True)
+
 	content_panels = Page.content_panels + [
 		FieldPanel("heading"),
 		ImageChooserPanel("heading_image"),
 		FieldPanel("category"),
+		FieldPanel("tags"),
 	]
 
 	# Category determines the filter for the listing page
@@ -112,7 +116,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 		context = super().get_context(request, *args, **kwargs)
 		if self.category != None:
 			if request.GET.get('tags'):
-				context['tag'] = request.GET.get('tags')
+				context['tags'] = request.GET.get('tags')
 				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=[request.GET.get('tags')])
 			else:
 				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
