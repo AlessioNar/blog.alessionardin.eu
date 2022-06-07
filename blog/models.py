@@ -116,7 +116,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 		context = super().get_context(request, *args, **kwargs)
 		if self.tags != None:
 			if self.category != None:
-				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=self.tags)
+				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=[self.tags])
 		elif self.category != None:
 			context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
 		else:
