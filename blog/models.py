@@ -117,7 +117,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 		if self.category != None:
 			if request.GET.get('tags'):
 				context['tags'] = request.GET.get('tags')
-				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=[request.GET.get('tags')])
+				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=self.tags)
 			else:
 				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
 		else:
