@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-    
+
     <div class="carousel-inner">
 
     {% for loop_cycle in self.carousel_images.all %}
@@ -11,12 +11,12 @@
 
         <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
             <img src="{{ img.url }}" class="d-block w-100" alt="{{img.alt}}" style="width: 100%; max-height: 20rem; object-fit: cover;">
-            <div class="carousel-caption">                
-                <h1 class="fw-bold">{{ self.banner_title }}</h1>                
+            <div class="carousel-caption">
+                <h1 class="fw-bold">{{ self.banner_title }}</h1>
                 {% if self.banner_subtitle %}
                     <p class="fs-4">{{self.banner_subtitle|richtext}}</p>
-                {% endif %}                
-            </div>                   
+                {% endif %}
+            </div>
         </div>
 
     {% endfor %}
@@ -36,10 +36,10 @@
 
 
     {% for block in page.content %}
-    <div class="container my-4">        
+    <div class="container my-4">
             {% include_block block %}
-    </div>        
-    {% endfor %}    
+    </div>
+    {% endfor %}
 
 
 {% if posts %}
@@ -49,20 +49,20 @@
     {% for post in posts %}
         <div class="col-lg-4 col-md-6 col-sm-12">
             <div class="card text-white bg-secondary mb-3">
-            {% image post.banner_image max-700x500 as blog_img %}
+            {% image post.card_image max-700x500 as card_image %}
             <div class="row">
             <div class="col-12"
                     <a href="{{post.url}}">
-                    <img src="{{blog_img.url}}" alt="{{blog_img.alt}}" style="width: 100%">
+                    <img src="{{card_image.url}}" alt="{{card_image.alt}}" style="width: 100%">
                     </a>
                     </div>
                     </div>
                 <div class="card-header">
                     <a href="{{ post.url}}">
-                        {{ post.custom_title }}
+                        {{ post.title }}
                     </a>
                 </div>
-                <div class="card-body">                
+                <div class="card-body">
                     <p class="card-text">{{post.intro|richtext}}</p>
                 </div>
             </div>
@@ -74,4 +74,3 @@
 {% endif %}
 
 {% endblock %}
-
