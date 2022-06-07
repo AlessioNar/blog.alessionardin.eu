@@ -8,9 +8,9 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
 from wagtail.admin.edit_handlers import (
-	FieldPanel, 
-	MultiFieldPanel, 
-	InlinePanel, 
+	FieldPanel,
+	MultiFieldPanel,
+	InlinePanel,
 	PageChooserPanel,
 
 	)
@@ -30,7 +30,7 @@ class Menu(ClusterableModel):
 	panels = [
 		MultiFieldPanel([
 			FieldPanel("title"),
-			FieldPanel("slug"),			
+			FieldPanel("slug"),
 			], heading="Menu"),
 		InlinePanel("menu_items", label="Menu Item")
 	]
@@ -38,25 +38,25 @@ class Menu(ClusterableModel):
 	def __str__(self):
 		return self.title
 
-class MenuItem(ClusterableModel, Orderable):
+class MenuItem(Orderable, ClusterableModel):
 	"""The first level of the Menu"""
-	
+
 	link_title = models.CharField(blank=True, null=True, max_length=50)
 	link_url = models.CharField(blank=True, null=True, max_length=500)
-	
+
 	link_page = models.ForeignKey(
-		"wagtailcore.Page", 
-		null=True, 
-		blank=True, 
-		related_name="+", 
+		"wagtailcore.Page",
+		null=True,
+		blank=True,
+		related_name="+",
 		on_delete=models.SET_NULL
 		)
 
 	submenu = models.ForeignKey(
-		"SubmenuItem", 
-		null=True, 
-		blank=True, 
-		related_name="+", 
+		"SubmenuItem",
+		null=True,
+		blank=True,
+		related_name="+",
 		on_delete=models.SET_NULL
 		)
 
@@ -65,15 +65,15 @@ class MenuItem(ClusterableModel, Orderable):
 	# The connection to the main menu
 	page = ParentalKey("Menu", related_name="menu_items")
 
-	panels = [	
+	panels = [
 	MultiFieldPanel([
 		FieldPanel("link_title"),
 		FieldPanel("link_url"),
 		PageChooserPanel("link_page"),
 	#	FieldPanel("tags"),
-		FieldPanel("open_in_new_tab"),				
+		FieldPanel("open_in_new_tab"),
 	], heading="Menu"),
-	
+
 	# The connection with the lower level of the menu
 	InlinePanel("submenu_items", label="Submenu item")
 
@@ -110,33 +110,33 @@ class SubmenuItem(Orderable):
 	link_url = models.CharField(blank=True, null=True, max_length=500)
 
 	link_page = models.ForeignKey(
-		"wagtailcore.Page", 
-		null=True, 
-		blank=True, 
-		related_name="+", 
+		"wagtailcore.Page",
+		null=True,
+		blank=True,
+		related_name="+",
 		on_delete=models.SET_NULL
 		)
-	
+
 
 	tags = models.ForeignKey(
-		"blog.BlogCategory", 
-		null=True, 
-		blank=True, 
-		related_name="+", 
+		"blog.BlogTag",
+		null=True,
+		blank=True,
+		related_name="+",
 		on_delete=models.SET_NULL
 		)
-		
+
 	menu_item = ParentalKey("MenuItem", related_name="submenu_items")
 
-	panels = [	
-	MultiFieldPanel([	
+	panels = [
+	MultiFieldPanel([
 			FieldPanel("link_title"),
 			MultiFieldPanel([
 				FieldPanel("link_url"),
 				PageChooserPanel("link_page"),
 				FieldPanel("tags"),
 				], heading="Urls")
-			
+
 			], heading="Menu Item"),
 	]
 
@@ -144,7 +144,7 @@ class SubmenuItem(Orderable):
 	def link(self):
 		if self.tags:
 			tag_url = str(self.link_page.url) + '?tags='+ self.tags.slug
-			return tag_url		
+			return tag_url
 		elif self.link_url:
 			return self.link_url
 		elif self.link_page:
