@@ -20,6 +20,8 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 from streams import blocks
 
+import re
+
 
 class BlogTag(models.Model):
     """Blog tag for a snippet"""
@@ -113,7 +115,8 @@ class BlogListingPage(RoutablePageMixin, Page):
         context = super().get_context(request, *args, **kwargs)
         if self.category is not None:
             if request.GET.get('tags'):
-                context['tag'] = request.GET.get('tags')
+                context['tag'] = re.sub(
+                    '-', ' ', request.GET.get('tags')).capitalize()
                 context['elements'] = BlogDetailPage.objects.live().public().filter(
                     category=self.category).filter(tags__slug__in=[request.GET.get('tags')])
             else:
