@@ -21,12 +21,12 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 from streams import blocks
 
+
 class BlogTag(models.Model):
 	"""Blog tag for a snippet"""
 	name = models.CharField(max_length=255)
 	slug = AutoSlugField(
-		populate_from=["name"]
-		, editable=True,
+		populate_from=["name"], editable=True,
 		help_text='A slug to identify posts by this tag',
 
 		)
@@ -37,22 +37,23 @@ class BlogTag(models.Model):
 	]
 
 	class Meta:
-		verbose_name="Blog Tag"
-		verbose_name_plural="Blog Tags"
-		ordering=["name"]
+		verbose_name = "Blog Tag"
+		verbose_name_plural = "Blog Tags"
+		ordering = ["name"]
 
 	def __str__(self):
 		"""String Wrapper of this class"""
 		return self.name
 
+
 register_snippet(BlogTag)
+
 
 class BlogCategory(models.Model):
 	"""Blog category for a snippet"""
 	name = models.CharField(max_length=255)
 	slug = AutoSlugField(
-		populate_from=["name"]
-		, editable=True,
+		populate_from=["name"], editable=True,
 		help_text='A slug to identify posts by this category',
 
 		)
@@ -63,15 +64,17 @@ class BlogCategory(models.Model):
 	]
 
 	class Meta:
-		verbose_name="Blog Category"
-		verbose_name_plural="Blog Categories"
-		ordering=["name"]
+		verbose_name = "Blog Category"
+		verbose_name_plural = "Blog Categories"
+		ordering = ["name"]
 
 	def __str__(self):
 		"""String Wrapper of this class"""
 		return self.name
 
+
 register_snippet(BlogCategory)
+
 
 class BlogListingPage(RoutablePageMixin, Page):
 	"""Listing Page lists all the Blog Detail Pages"""
@@ -91,7 +94,6 @@ class BlogListingPage(RoutablePageMixin, Page):
 		)
 
 
-
 	category = models.ForeignKey(
 		"blog.BlogCategory",
 		null=True,
@@ -100,13 +102,10 @@ class BlogListingPage(RoutablePageMixin, Page):
 		on_delete=models.SET_NULL,
 		)
 
-	tags = ParentalManyToManyField(BlogTag, blank=True)
-
 	content_panels = Page.content_panels + [
 		FieldPanel("heading"),
 		ImageChooserPanel("heading_image"),
 		FieldPanel("category"),
-		FieldPanel("tags"),
 	]
 
 	# Category determines the filter for the listing page
@@ -114,11 +113,12 @@ class BlogListingPage(RoutablePageMixin, Page):
 		"""Adding custom elements to our context"""
 
 		context = super().get_context(request, *args, **kwargs)
-		if self.tags != None:
-			if self.category != None:
-				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=[self.tags])
-		elif self.category != None:
-			context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
+		if self.category != None:
+			if request.GET.get('tags'):
+				context['tag'] = request.GET.get('tags')
+				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category).filter(tags__slug__in=[request.GET.get('tags')])
+			else:
+				context['elements'] = BlogDetailPage.objects.live().public().filter(category=self.category)
 		else:
 			context['elements'] = BlogDetailPage.objects.live().public()
 
@@ -132,6 +132,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 		sitemap = super().get_sitemap_urls(request)
 		return sitemap
 
+
 class HorizontalListingPage(BlogListingPage):
 	"""Partner Listing Page"""
 	template = "blog/horizontal_listing_page.html"
@@ -141,8 +142,9 @@ class HorizontalListingPage(BlogListingPage):
 class BlogDetailPage(Page):
 	"""Parental Blog Detail Page."""
 
-	template  = "blog/blog_detail_page.html"
-	custom_title = models.CharField(max_length=100, blank=True, null=True, help_text="Fill in if you want to change the title on the top of the page")
+	template = "blog/blog_detail_page.html"
+	custom_title = models.CharField(max_length=100, blank=True, null=True,
+	                                help_text="Fill in if you want to change the title on the top of the page")
 	category = models.ForeignKey(
 		"blog.BlogCategory",
 		null=True,
@@ -150,7 +152,6 @@ class BlogDetailPage(Page):
 		related_name="+",
 		on_delete=models.SET_NULL,
 		)
-
 
 	tags = ParentalManyToManyField(BlogTag, blank=True)
 
@@ -164,12 +165,12 @@ class BlogDetailPage(Page):
 		)
 
 	heading_image = models.ForeignKey(
-	"wagtailimages.Image",
-		null=True,
-		blank=False,
-		related_name="+",
-		on_delete=models.SET_NULL,
-		help_text="Image used as a banner, suggested 1200 × 400 px",
+            "wagtailimages.Image",
+          		null=True,
+          		blank=False,
+          		related_name="+",
+          		on_delete=models.SET_NULL,
+          		help_text="Image used as a banner, suggested 1200 × 400 px",
 
 		)
 
@@ -194,7 +195,6 @@ class BlogDetailPage(Page):
 		blank=True
 	)
 
-
 	content_panels = Page.content_panels + [
 		MultiFieldPanel([
 						FieldPanel("custom_title"),
@@ -215,14 +215,19 @@ class NewsDetailPage(BlogDetailPage):
 
 	content_panels = BlogDetailPage.content_panels
 
+
 class ProjectDetailPage(BlogDetailPage):
 
 	"""Model for Projects"""
 	template = "blog/project_detail_page.html"
-	call_id = models.CharField(max_length=150, blank=True, null=True, help_text='The call won by the project')
-	start_date = models.DateField(blank=True, null=True, help_text='The starting date of the project')
-	end_date = models.DateField(blank=True, null=True, help_text='The end date of the project')
-	is_active = models.BooleanField(blank=False, null=False, default=True, help_text="The status of the project")
+	call_id = models.CharField(
+		max_length=150, blank=True, null=True, help_text='The call won by the project')
+	start_date = models.DateField(
+		blank=True, null=True, help_text='The starting date of the project')
+	end_date = models.DateField(
+		blank=True, null=True, help_text='The end date of the project')
+	is_active = models.BooleanField(
+		blank=False, null=False, default=True, help_text="The status of the project")
 
 	content_panels = Page.content_panels + [
 		MultiFieldPanel([
@@ -240,13 +245,17 @@ class ProjectDetailPage(BlogDetailPage):
 		StreamFieldPanel("content"),
 	]
 
+
 class EventDetailPage(BlogDetailPage):
 
 	"""Model for Projects"""
 	template = "blog/event_detail_page.html"
-	start_date = models.DateField(blank=True, null=True, help_text='The starting date of the event')
-	end_date = models.DateField(blank=True, null=True, help_text='The end date of the project')
-	location = models.CharField(max_length=200, blank=True, null=True, help_text="Where is the event taking place")
+	start_date = models.DateField(
+		blank=True, null=True, help_text='The starting date of the event')
+	end_date = models.DateField(
+		blank=True, null=True, help_text='The end date of the project')
+	location = models.CharField(max_length=200, blank=True,
+	                            null=True, help_text="Where is the event taking place")
 	content_panels = Page.content_panels + [
 		MultiFieldPanel([
 						FieldPanel("custom_title"),
@@ -261,6 +270,7 @@ class EventDetailPage(BlogDetailPage):
 			]),
 		StreamFieldPanel("content"),
 	]
+
 
 class PartnerDetailPage(BlogDetailPage):
 	"""Partner Detail Page"""
