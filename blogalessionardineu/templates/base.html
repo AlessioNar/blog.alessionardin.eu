@@ -55,9 +55,11 @@
 
 
                         {% for subitem in item.submenu_items.all %}
+                          <a href="{{subitem.link}}" class="text-decoration-none text-white">
                                  <li class="dropdown-item"  id="dropdown">
-                                 <a href="{{subitem.link}}" class="text-white text-decoration-none">{{subitem.title}} </a>
+                                   {{subitem.title}}
                                  </li>
+                          </a>
                         {% endfor %}
                         </ul>
                         </li>
