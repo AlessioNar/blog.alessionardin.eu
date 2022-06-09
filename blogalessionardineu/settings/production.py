@@ -19,7 +19,7 @@ DATABASES = {
 
 DEBUG = True
 
-ALLOWED_HOSTS= ['194.233.171.61', "blog.alessionardin.eu", 'localhost']
+ALLOWED_HOSTS= [os.getenv('IP_ADDRESS'), "blog.alessionardin.eu", 'localhost']
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
