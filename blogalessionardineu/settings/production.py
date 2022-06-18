@@ -17,7 +17,7 @@ DATABASES = {
         }
     }
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS= [os.getenv('IP_ADDRESS'), "blog.alessionardin.eu", 'localhost']
 
