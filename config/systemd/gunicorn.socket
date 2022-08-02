@@ -1,0 +1,9 @@
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/home/admin/blog.alessionardin.eu/run/gunicorn.sock
+SocketUser=admin
+
+[Install]
+WantedBy=sockets.target

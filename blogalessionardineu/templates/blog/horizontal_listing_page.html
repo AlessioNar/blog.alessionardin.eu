@@ -19,25 +19,62 @@
 </div>
 {% if elements %}
 
-{% for element in elements %}
+  {% for element in elements %}
 
-{% image element.card_image max-500x500 as img %}
+    {% if element.card_image is null %}
+
+    <div class="container">
+      <div class="row horizontal-card">
+        <a class="text-decoration-none fw-bold" href="{{ element.url}}">
+          <h3>{{element.title}}</h3>
+          {{element.intro|richtext}}
+        </a>
+      </div>
+    </div>
+    </div>
+    {% else %}
+    {% image element.card_image max-500x500 as img %}
+
+    <div class="container">
+      <div class="row horizontal-card">
+      <div class="col-sm-12 col-lg-5 center text-center mb-3">
+        <a href="{{ element.url}}">
+        <img src="{{img.url}}" alt="{{img.alt}}" class="card-img">
+        </a>
+      </div>
+      <div class="col-sm-12 col-lg-7 mt-2 text-center">
+        <a class="text-decoration-none fw-bold" href="{{ element.url}}">
+          <h3>{{element.title}}</h3>
+          {{element.intro|richtext}}
+        </a>
+      </div>
+    </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 <div class="container">
-	<div class="row horizontal-card">
-	<div class="col-sm-12 col-lg-5 center text-center mb-3">
-    <a href="{{ element.url}}">
-		<img src="{{img.url}}" alt="{{img.alt}}" class="card-img">
-    </a>
-	</div>
-	<div class="col-sm-12 col-lg-7 mt-2 text-center">
-    <a class="text-decoration-none fw-bold" href="{{ element.url}}">
-      <h3>{{element.title}}</h3>
-    </a>
-	</div>
+  <div class="row">
+    <div class="col-lg-12">
+      <nav aria-label="Page navigation example">
+        {% if elements.paginator.num_pages > 1 %}
+        <ul class="pagination">
+          {% if elements.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{elements.previous_page_number}}">Previous</a></li>          
+          {% endif %}
+            {% for page_num in elements.paginator.page_range %}
+            <li class="page-item {% if page_num == elements.number %} active {% endif %}"><a class="page-link" href="?page={{page_num}}">{{page_num}}</a></li>
+            {% endfor %}          
+          {% if elements.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{elements.next_page_number}}">Next</a></li>
+          {% endif %}
+        </ul>
+        {% endif %}
+      </nav>
+    </div>
+  </div>
 </div>
-</div>
-{% endfor %}
-{% endif %}
+
 
 {% endblock %}

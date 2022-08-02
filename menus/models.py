@@ -20,6 +20,7 @@ from wagtail.core.models import Orderable
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
+
 @register_snippet
 class Menu(ClusterableModel):
 	"""The main menu clusterable model"""
@@ -37,6 +38,7 @@ class Menu(ClusterableModel):
 
 	def __str__(self):
 		return self.title
+
 
 class MenuItem(Orderable, ClusterableModel):
 	"""The first level of the Menu"""
@@ -66,16 +68,16 @@ class MenuItem(Orderable, ClusterableModel):
 	page = ParentalKey("Menu", related_name="menu_items")
 
 	panels = [
-	MultiFieldPanel([
+            MultiFieldPanel([
 		FieldPanel("link_title"),
 		FieldPanel("link_url"),
 		PageChooserPanel("link_page"),
-	#	FieldPanel("tags"),
+                #	FieldPanel("tags"),
 		FieldPanel("open_in_new_tab"),
-	], heading="Menu"),
+                ], heading="Menu"),
 
-	# The connection with the lower level of the menu
-	InlinePanel("submenu_items", label="Submenu item")
+            # The connection with the lower level of the menu
+            InlinePanel("submenu_items", label="Submenu item")
 
 	]
 
@@ -103,11 +105,13 @@ class MenuItem(Orderable, ClusterableModel):
 			return self.link_title
 		return 'Missing Title'
 
+
 class SubmenuItem(Orderable):
 
 	"""Subclassing menu items to create sublists"""
 	link_title = models.CharField(blank=True, null=True, max_length=50)
 	link_url = models.CharField(blank=True, null=True, max_length=500)
+	open_in_new_tab = models.BooleanField(default=False, blank=True)
 
 	link_page = models.ForeignKey(
 		"wagtailcore.Page",
@@ -116,7 +120,6 @@ class SubmenuItem(Orderable):
 		related_name="+",
 		on_delete=models.SET_NULL
 		)
-
 
 	tags = models.ForeignKey(
 		"blog.BlogTag",
@@ -129,21 +132,22 @@ class SubmenuItem(Orderable):
 	menu_item = ParentalKey("MenuItem", related_name="submenu_items")
 
 	panels = [
-	MultiFieldPanel([
+            MultiFieldPanel([
 			FieldPanel("link_title"),
 			MultiFieldPanel([
+				
 				FieldPanel("link_url"),
 				PageChooserPanel("link_page"),
 				FieldPanel("tags"),
-				], heading="Urls")
-
-			], heading="Menu Item"),
+				], heading="Urls"),
+			FieldPanel("open_in_new_tab")
+			], heading="Submenu Item"),
 	]
 
 	@property
 	def link(self):
 		if self.tags:
-			tag_url = str(self.link_page.url) + '?tags='+ self.tags.slug
+			tag_url = str(self.link_page.url) + '?tags=' + self.tags.slug
 			return tag_url
 		elif self.link_url:
 			return self.link_url

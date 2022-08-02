@@ -1,0 +1,36 @@
+#!/bin/bash
+
+NAME=blogalessionardineu
+DOMAIN=blog.alessionardin.eu
+
+DJANGODIR=/home/admin/"${DOMAIN}"
+USER=admin
+GROUP=admin
+NUM_WORKERS=3
+SOCKFILE=unix:/home/admin/"${DOMAIN}"/run/gunicorn.sock
+RUNDIR=/home/admin/${DOMAIN}/run/
+
+DJANGO_SETTINGS_MODULE="${NAME}".settings.production
+DJANGO_WSGI_MODULE="${NAME}".wsgi
+
+echo "Starting $NAME as `whoami`"
+
+# Activate the virtual environment
+cd $DJANGODIR
+source ./"${NAME}"-env/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+# Create the run directory if it doesn't exist
+test -d $RUNDIR || mkdir -p $RUNDIR
+echo "Run directory created at $RUNDIR"
+
+# Start your Django Gunicorn instance
+exec /home/admin/"${DOMAIN}"/"${NAME}"-env/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $NUM_WORKERS \
+  --user=$USER \
+  --group=$GROUP \
+  --bind=$SOCKFILE \
+  --log-level=debug \
+  --log-file=-

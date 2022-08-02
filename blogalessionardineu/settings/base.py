@@ -12,27 +12,30 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from dotenv import load_dotenv
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
+load_dotenv()
+NAME = os.getenv('NAME')
 
 # Application definition
-
 INSTALLED_APPS = [
     'home',
     'search',
     'flex',
     'streams',
     'site_settings',
-    'subscribers',
+    #'subscribers',
     'blog',
     'menus',
+    'contact',
+    'websites',
+    #'partners',
+    'base',
 
+    #'wagtailseo',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.contrib.settings',
@@ -49,12 +52,12 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
-
     'wagtailmarkdown',
-
 
     'modelcluster',
     'taggit',
+
+    'django_sass',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,11 +66,39 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+    'themes',
 
 
 ]
 
+LOGGING = {
+    'version': 1, 
+    # The version number of our log
+    'disable_existing_loggers': False,
+    # django uses some of its own loggers for internal operations. In case you want to disable them just replace the False above with true.
+    # A handler for WARNING. It is basically writing the WARNING messages into a file called WARNING.log
+    'handlers': {
+        
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'error.log'),
+        },
+    },
+    # A logger for WARNING which has a handler called 'file'. A logger can have multiple handler
+    'loggers': {
+       # notice the blank '', Usually you would put built in loggers like django or root here based on your needs
+        '': {
+            'handlers': ['file'], #notice how file variable is called in handler which has been defined above
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
+
 MIDDLEWARE = [
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,13 +106,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
-
-ROOT_URLCONF = 'blogalessionardineu.urls'
+ROOT_URLCONF = NAME + '.urls'
 
 TEMPLATES = [
     {
@@ -96,13 +124,17 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'wagtail.contrib.settings.context_processors.settings',
+                'wagtail.contrib.settings.context_processors.settings',                  
+              
+
+                NAME + ".context_processors.base_settings",
+
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'blogalessionardineu.wsgi.application'
+WSGI_APPLICATION = NAME + '.wsgi.application'
 
 
 # Database
@@ -148,16 +180,12 @@ USE_TZ = True
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
 ]
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, 'static'),
 ]
-
-# ManifestStaticFilesStorage is recommended in production, to prevent outdated
-# JavaScript / CSS assets being served from cache (e.g. after a Wagtail upgrade).
-# See https://docs.djangoproject.com/en/4.0/ref/contrib/staticfiles/#manifeststaticfilesstorage
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
@@ -166,10 +194,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-
 # Wagtail settings
 # @todo this may break
-WAGTAIL_SITE_NAME = "blog.alessionardin.eu"
+WAGTAIL_SITE_NAME = os.getenv('DOMAIN')
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -181,15 +208,22 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'blog.alessionardin.eu'
+BASE_URL = os.getenv('DOMAIN')
+WAGTAILADMIN_BASE_URL = os.getenv('DOMAIN')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 7 * 1024 * 1024   # 7mb
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = 30672000
+
 
 WAGTAILMARKDOWN = {
     "autodownload_fontawesome": False,
     "allowed_tags": [],  # optional. a list of HTML tags. e.g. ['div', 'p', 'a']
     "allowed_styles": [],  # optional. a list of styles
-    "allowed_attributes": {},  # optional. a dict with HTML tag as key and a list of attributes as value
+    # optional. a dict with HTML tag as key and a list of attributes as value
+    "allowed_attributes": {},
     "extensions": [],  # optional. a list of python-markdown supported extensions
-    "extension_configs": {},  # optional. a dictionary with the extension name as key, and its configuration as value
+    # optional. a dictionary with the extension name as key, and its configuration as value
+    "extension_configs": {},
 }

@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
-{% load wagtailimages_tags wagtailcore_tags %}
-
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load static %}
 
 {% block content %}
 
 
 <div class="container mt-4">
-  {% image self.heading_image fill-2400x600 as heading_image %}
 
 	<!-- Page title -->
     <h1 class="my-5 text-center">{{self.title}}</h1>
@@ -24,9 +23,37 @@
 
 </div>
 
+<section class="padding-top screen-text">
+       <div class="container">
+           <div class="row">
+               <div class="col-sm-12 col-md-6 center-img p-2">
+                 {% image self.heading_image max-500x500 as heading_image %}
+             		<img class="partner-image" src="{{ heading_image.url }}" alt="{{ heading_image.alt }}">
+               </div>
+
+               <div class="col-sm-12 col-md-6">                   
+                   <div class="project-info overflow">
+					<div class="container">
+                     {{self.description|richtext}}
+					</div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </section>
+
 {% for block in page.content %}
 	{% include_block block %}
 {% endfor %}
+
+<div class="container my-3">
+	<div class="row">
+		<div class="col">
+			<a class='btn btn-primary' href='https://www.linkedin.com/sharing/share-offsite/?url={{self.full_url}}' target="_blank">Share on Linkedin</a>
+			<a class='btn btn-primary' href='https://twitter.com/intent/tweet?url={{self.full_url}}' target="_blank">Share on Twitter</a>
+			</div>
+	</div>
+</div>
 
 
 {% endblock %}

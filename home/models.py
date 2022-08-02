@@ -11,67 +11,43 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 
 from streams import blocks
 
-from blog.models import BlogDetailPage
-
-class HomePageCarouselImages(Orderable):
-    """Between 1 and 5 images for the home page carousel."""
-
-    page = ParentalKey("home.HomePage", related_name="carousel_images")
-    carousel_image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=False,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        )
-    panels = [
-        ImageChooserPanel("carousel_image"),
-    ]
+from blog.models import BlogDetailPage, NewsDetailPage
+from websites.models import Website
 
 
-
-
-class HomePage(RoutablePageMixin, Page): 
+class HomePage(RoutablePageMixin, Page):
     """Home page model"""
 
     template = "home/home_page.html"
-    max_count = 1
-    banner_title = models.CharField(max_length=100, blank=False, null=True) 
-    banner_subtitle = RichTextField(features=["bold", "italic"], blank=True, null=True)
+    max_count = 1    
 
     content = StreamField(
-        [            
-            
-            ("title_and_text", blocks.TitleAndTextBlock()),
-            ("full_richtext", blocks.RichtextBlock()),
-            ("simple_richtext", blocks.SimpleRichtextBlock()),
-            ("cards", blocks.CardBlock()),
+        [
+
+            ("title", blocks.TitleBlock()),
+            ("richtext", blocks.RichtextBlock()),
+            ("vertical_card", blocks.VerticalCardBlock()),
+            ("horizontal_card", blocks.HorizontalCardBlock()),
+            ("multiple_vertical_card_block", blocks.MultipleVerticalCardBlocks()),
             ("cta", blocks.CTABlock()),
             ("image", blocks.ImageBlock()),
             ("markdown", blocks.BodyBlock()),
+            ("jumbotron", blocks.JumbotronBlock()),
         ],
         null=True,
         blank=True
     )
 
-
     content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            FieldPanel("banner_title"),
-            FieldPanel("banner_subtitle"),
-            ], heading="Banner Options"),
-        MultiFieldPanel([
-            InlinePanel("carousel_images", max_num=5, min_num=1, label="Image"),
-            ], heading="Carousel Images"),
         StreamFieldPanel("content"),
-        
 
     ]
 
     def get_context(self, request, *args, **kwargs):
         """Adding the four latest posts"""
-        context = super().get_context(request, *args, **kwargs)        
-        context["posts"] = BlogDetailPage.objects.live().public()[:4]
+        context = super().get_context(request, *args, **kwargs)
+        context["carousel"] = NewsDetailPage.objects.live().public()[:5]
+        context["websites"] = Website.objects.all()
         return context
 
     class Meta:
@@ -79,10 +55,7 @@ class HomePage(RoutablePageMixin, Page):
         verbose_name = "Home Page"
         verbose_name_plural = "Home Pages"
 
-
-
     @route(r'^subscribe/$')
     def the_subscribe_page(self, request, *args, **kwargs):
-        context = self.get_context(request, *args, **kwargs)        
+        context = self.get_context(request, *args, **kwargs)
         return render(request, "home/subscribe.html", context)
-

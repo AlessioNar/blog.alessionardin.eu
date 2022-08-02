@@ -3,6 +3,7 @@ from django.db import models
 from django_extensions.db.fields import AutoSlugField
 
 from django import forms
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalManyToManyField
 
@@ -15,12 +16,9 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin
 
 from wagtail.snippets.models import register_snippet
 
-
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from streams import blocks
-
-import re
 
 
 class BlogTag(models.Model):
@@ -82,7 +80,7 @@ class BlogListingPage(RoutablePageMixin, Page):
 
     template = "blog/blog_listing_page.html"
 
-    heading = models.CharField(max_length=200, blank=False, null=True)
+    heading = models.CharField(max_length=200, blank=True, null=True)
 
     heading_image = models.ForeignKey(
         "wagtailimages.Image",
@@ -101,11 +99,32 @@ class BlogListingPage(RoutablePageMixin, Page):
         related_name="+",
         on_delete=models.SET_NULL,
     )
+    content = StreamField(
+        [
+            ("title", blocks.TitleBlock()),
+            ("richtext", blocks.RichtextBlock()),
+            ("vertical_card", blocks.VerticalCardBlock()),
+            ("horizontal_card", blocks.HorizontalCardBlock()),
+            ("multiple_vertical_card_block", blocks.MultipleVerticalCardBlocks()),
+            ("multiple_buttons_block", blocks.CardMultipleButtonBlock()),
+            ("free_card", blocks.FreeVerticalCardsBlock()),
+            ("cta", blocks.CTABlock()),
+            ("image", blocks.ImageBlock()),
+            ("markdown", blocks.BodyBlock()),
+            ("video", blocks.VideoBlock()),
+
+        ],
+        null=True,
+        blank=True
+    )
 
     content_panels = Page.content_panels + [
-        FieldPanel("heading"),
-        ImageChooserPanel("heading_image"),
-        FieldPanel("category"),
+        MultiFieldPanel([
+            FieldPanel("heading"),
+            ImageChooserPanel("heading_image"),
+            FieldPanel("category"),
+        ], heading="General Information"),
+        StreamFieldPanel("content"),
     ]
 
     # Category determines the filter for the listing page
@@ -115,15 +134,45 @@ class BlogListingPage(RoutablePageMixin, Page):
         context = super().get_context(request, *args, **kwargs)
         if self.category is not None:
             if request.GET.get('tags'):
-                context['tag'] = re.sub(
-                    '-', ' ', request.GET.get('tags')).capitalize()
-                context['elements'] = BlogDetailPage.objects.live().public().filter(
-                    category=self.category).filter(tags__slug__in=[request.GET.get('tags')])
+                context['tag'] = request.GET.get('tags')
+                all_posts = BlogDetailPage.objects.live().public().filter(
+                    category=self.category).filter(tags__slug__in=[request.GET.get('tags')]).order_by('path')
+                paginator = Paginator(all_posts, 1) # @todo change to 12 per page
+                page = request.GET.get('page')
+                try:
+                    posts = paginator.page(page)
+                except PageNotAnInteger:
+                    posts = paginator.page(1)
+                except EmptyPage:
+                    posts = paginator.page(paginator.num_pages)
+
+                context['elements'] = posts
+                
             else:
-                context['elements'] = BlogDetailPage.objects.live(
-                ).public().filter(category=self.category)
-        else:
-            context['elements'] = BlogDetailPage.objects.live().public()
+                all_posts = BlogDetailPage.objects.live(
+                ).public().filter(category=self.category).order_by('path')
+                paginator = Paginator(all_posts, 12)
+                page = request.GET.get('page')
+                try:
+                    posts = paginator.page(page)
+                except PageNotAnInteger:
+                    posts = paginator.page(1)
+                except EmptyPage:
+                    posts = paginator.page(paginator.num_pages)
+
+                context['elements'] = posts
+        else:            
+            all_posts = BlogDetailPage.objects.live().public().order_by('path')            
+            paginator = Paginator(all_posts, 1) # @todo change to 12 per page
+            page = request.GET.get('page')
+            try:
+                posts = paginator.page(page)
+            except PageNotAnInteger:
+                posts = paginator.page(1)
+            except EmptyPage:
+                posts = paginator.page(paginator.num_pages)
+
+            context['elements'] = posts
 
         return context
 
@@ -183,19 +232,23 @@ class BlogDetailPage(Page):
 
     content = StreamField(
         [
-            ("title_and_text", blocks.TitleAndTextBlock()),
-            ("full_richtext", blocks.RichtextBlock()),
-            ("simple_richtext", blocks.SimpleRichtextBlock()),
-            ("cards", blocks.CardBlock()),
+            ("title", blocks.TitleBlock()),
+            ("richtext", blocks.RichtextBlock()),
+            ("vertical_card", blocks.VerticalCardBlock()),
+            ("horizontal_card", blocks.HorizontalCardBlock()),
+            ("multiple_vertical_card_block", blocks.MultipleVerticalCardBlocks()),
+            ("multiple_buttons_block", blocks.CardMultipleButtonBlock()),
+            ("free_card", blocks.FreeVerticalCardsBlock()),
             ("cta", blocks.CTABlock()),
             ("image", blocks.ImageBlock()),
             ("markdown", blocks.BodyBlock()),
+            ("video", blocks.VideoBlock()),
 
         ],
         null=True,
         blank=True
-    )
-
+        )
+    
     content_panels = Page.content_panels + [
         MultiFieldPanel([
             FieldPanel("custom_title"),
@@ -203,7 +256,7 @@ class BlogDetailPage(Page):
             ImageChooserPanel("card_image"),
             ImageChooserPanel("heading_image"),
             FieldPanel("category"),
-            FieldPanel("tags", widget=forms.CheckboxSelectMultiple),
+            #FieldPanel("tags", widget=forms.CheckboxSelectMultiple),
         ]),
         StreamFieldPanel("content"),
     ]
@@ -255,8 +308,8 @@ class EventDetailPage(BlogDetailPage):
         blank=True, null=True, help_text='The starting date of the event')
     end_date = models.DateField(
         blank=True, null=True, help_text='The end date of the project')
-    location = models.CharField(max_length=200, blank=True,
-                                null=True, help_text="Where is the event taking place")
+    location = models.CharField(
+        max_length=200, blank=True, null=True, help_text="Where is the event taking place")
     content_panels = Page.content_panels + [
         MultiFieldPanel([
             FieldPanel("custom_title"),
@@ -272,27 +325,20 @@ class EventDetailPage(BlogDetailPage):
         StreamFieldPanel("content"),
     ]
 
-
 class PartnerDetailPage(BlogDetailPage):
     """Partner Detail Page"""
 
     template = "blog/partner_detail_page.html"
+    description = RichTextField(
+        blank=True,
+        null=True,
+        help_text='Intro text for preview'
+    )
+    content_panels =[
+            FieldPanel("description"),
+             ] +  BlogDetailPage.content_panels
 
-    website = models.URLField(blank=True, null=True)
-
-    content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            FieldPanel("intro"),
-            FieldPanel("website"),
-            FieldPanel("category"),
-            ImageChooserPanel("card_image"),
-            ImageChooserPanel("heading_image"),
-        ]),
-        StreamFieldPanel("content"),
-
-
-    ]
 
     class Meta:
-        verbose_name = "Partner"
-        verbose_name_plural = "Partners"
+        verbose_name = "Partner detail Page"
+        verbose_name_plural = "Partner detail Pages"

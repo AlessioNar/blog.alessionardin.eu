@@ -1,7 +1,12 @@
 {% load wagtailcore_tags %}
-
-<div class="row">
-	<div class="col-lg-12 ">
-		<a href="{{ self.url }}" class="btn btn-primary">Learn More</a>
-	</div>
-</div>
+<a href="
+{% if self.button_page %}
+{{self.button_page.url}}
+{% elif self.document %}
+{{self.document.url}}
+{% elif self.button_url %}
+{{self.button_url}}
+{% endif %}"
+class="btn mx-1" {% if self.open_in_new_tab %}target="_blank"{% endif %}>
+{% if self.button_text %}{{self.button_text}}{% else %}Learn More{% endif %}
+</a>

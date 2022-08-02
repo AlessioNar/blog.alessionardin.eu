@@ -1,76 +1,52 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
+
 {% block content %}
 
-<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+<div class="container-fluid">  
+  {% if carousel %}
+    <div class="row">
 
-    <div class="carousel-inner">
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                  {% for post in carousel %}
+                      {% image post.heading_image fill-2400x500 as heading_image %}
+                      <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
 
-    {% for loop_cycle in self.carousel_images.all %}
-        {% image loop_cycle.carousel_image width-1000 as img %}
+                          <img src="{{ heading_image.url }}" class="d-block w-100 heading-image" alt="{{heading_image.alt}}">
 
-        <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
-            <img src="{{ img.url }}" class="d-block w-100" alt="{{img.alt}}" style="width: 100%; max-height: 20rem; object-fit: cover;">
-            <div class="carousel-caption">
-                <h1 class="fw-bold">{{ self.banner_title }}</h1>
-                {% if self.banner_subtitle %}
-                    <p class="fs-4">{{self.banner_subtitle|richtext}}</p>
-                {% endif %}
-            </div>
-        </div>
 
-    {% endfor %}
 
-    </div>
-    {% if self.carousel_images.all|length > 1 %}
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-    {% endif %}
+                      <div class="container-fluid carousel-home">
+                      <div class="carousel-caption {% if settings.themes.Theme.dark_background_color %}text-light{% else %}text-dark{% endif %}">
+                      <h3 class="fw-bold {% if settings.themes.Theme.dark_background_color %}text-light{% else %}text-dark{% endif %}">{{ post.title }} </h3>
+                      {% if post.intro %}<p>{{post.intro|richtext}}</p>{% endif %}
+                      <a class="btn btn-sm btn-secondary mb-1" href="{{post.url}}">Read more</a>
+                              </div>
+                              </div>
+                      </div>
+                  {% endfor %}
+              </div>
+              {% if carousel.all|length > 1 %}
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                  </button>
+              {% endif %}
+          </div>
+
+  {% endif %}
 </div>
-
-
-    {% for block in page.content %}
-    <div class="container my-4">
+</div>
+{% for block in page.content %}
+    <div class="container-fluid">
             {% include_block block %}
     </div>
-    {% endfor %}
+{% endfor %}
 
-
-{% if posts %}
-<div class="container my-4">
-    <h2 class="text-center my-4">Latest Blog Posts</h2>
-    <div class="row">
-    {% for post in posts %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card text-white bg-secondary mb-3">
-            {% image post.card_image max-700x500 as card_image %}
-            <div class="row">
-            <div class="col-12"
-                    <a href="{{post.url}}">
-                    <img src="{{card_image.url}}" alt="{{card_image.alt}}" style="width: 100%">
-                    </a>
-                    </div>
-                    </div>
-                <div class="card-header">
-                    <a href="{{ post.url}}">
-                        {{ post.title }}
-                    </a>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">{{post.intro|richtext}}</p>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    <div class="clearfix"></div>
-    </div>
-</div>
-{% endif %}
 
 {% endblock %}
